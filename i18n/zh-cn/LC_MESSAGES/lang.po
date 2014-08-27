@@ -6,13 +6,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.6\n"
 "POT-Creation-Date: 2013-08-06 14:16+China Standard Time\n"
-"PO-Revision-Date: 2013-08-07 16:36+ZONE\n"
-"Last-Translator: Arroz <akindleear@gmail.com>\n"
+"PO-Revision-Date: 2014-04-04 15:00+0800\n"
+"Last-Translator: rexdf <rexdf@rexdf.rexdf>\n"
 "Language-Team: Arroz <akindleear@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
+"Language: zh_CN\n"
+"X-Generator: Poedit 1.6.4\n"
+
+msgid "Device type"
+msgstr "设备类型"
 
 msgid "Old password is wrong!"
 msgstr "原密码错误！"
@@ -68,7 +73,7 @@ msgstr "标题和URL都不能为空！"
 msgid "Book(s) (%s) put to queue!"
 msgstr "书籍 (%s) 已放入推送队列！"
 
-msgid "No book(s) to deliver!"
+msgid "No book to deliver!"
 msgstr "没有需要推送的书籍！"
 
 msgid "Logout"
@@ -100,9 +105,6 @@ msgstr "原密码"
 
 msgid "New password"
 msgstr "新密码"
-
-msgid "Confirm password"
-msgstr "确认密码"
 
 msgid "Confirm Change"
 msgstr "确认修改"
@@ -143,13 +145,10 @@ msgstr "改密码"
 msgid "Delete"
 msgstr "删除"
 
-msgid "Please dont change these configures if you dont know what's mean!"
-msgstr "除非你很熟悉这些配置，否则不建议修改！"
-
 msgid "Url Filter"
 msgstr "URL过滤"
 
-msgid "Urls in list would not be downloaded for saving of time."
+msgid "Urls in list would not be downloaded."
 msgstr "在此列表中的URL将不会被下载，以便节省时间，仅适用于文章中的图片URL"
 
 msgid "Please input regular expression"
@@ -158,8 +157,11 @@ msgstr "请输入正则表达式"
 msgid "White List"
 msgstr "邮件白名单"
 
-msgid "mail sent to xxx@<em>appid</em>.appspotmail.com will be transfered to admin's kindle."
-msgstr "发送到xxx@<em>appid</em>.appspotmail.com的邮件正文将会被转发至管理员的Kindle邮箱"
+msgid ""
+"mail sent to %sxxx@<em>appid</em>.appspotmail.com will be transfered to your "
+"email."
+msgstr ""
+"发送到%sxxx@<em>appid</em>.appspotmail.com的邮件正文将会被转发至你注册的邮箱"
 
 msgid "Please input mail address"
 msgstr "请输入邮件地址"
@@ -170,17 +172,24 @@ msgstr "5秒钟后自动返回上一页"
 msgid "Click to back"
 msgstr "点击直接返回"
 
-msgid "KindleEar is a web application to aggregate rss for generating"
-msgstr "KindleEar是一个将RSS订阅制作成"
+msgid "Free Forever."
+msgstr "分享自由。"
 
-msgid "periodical mobi file with images"
-msgstr "带图杂志mobi格式"
+msgid "Good News Always Come With You."
+msgstr "好消息时刻相随。"
 
-msgid "and send it to your kindle automatically."
-msgstr "发送至Kindle上的应用网站。"
+msgid "Inherited From Calibre"
+msgstr "源自Calibre"
 
-msgid "Author modified and ported Calibre to generate mobi file in GAE without kindlegen tool of Amazon,"
-msgstr "作者提取了Calibre的mobi模块用于通过Python在线生成mobi格式文件，不依赖Amazon的kindlegen工具，"
+msgid "Share Your Idea"
+msgstr "分享智慧"
+
+msgid ""
+"Author modified and ported Calibre to generate mobi file in GAE without "
+"kindlegen tool of Amazon,"
+msgstr ""
+"作者提取了Calibre的mobi模块用于通过Python在线生成mobi格式文件，不依赖Amazon的"
+"kindlegen工具，"
 
 msgid "for periodical mobi file is a better format to represent news feeds."
 msgstr "杂志格式书籍排版精美，跳转方便，阅读体验更好。"
@@ -191,17 +200,19 @@ msgstr "使用本站"
 msgid "open source KindleEar application"
 msgstr "开源的KindleEar程序"
 
-msgid ", You can deploy your own server to push news feeds to your kindle dialy or share with your friends."
-msgstr "，你可以在GAE上搭建自己的推送服务器，下载包含图片的RSS订阅或网页推送到你的Kindle，并支持多账号，可以提供给三五好友同时使用。"
-
-msgid "Current version : "
-msgstr "当前运行版本："
+msgid ""
+", You can deploy your own server to push news feeds to your kindle dialy or "
+"share with your friends."
+msgstr ""
+"，你可以在GAE上搭建自己的推送服务器，下载包含图片的RSS订阅或网页推送到你的"
+"Kindle，并支持多账号，可以提供给三五好友同时使用。"
 
 msgid "Login"
-msgstr "确认登陆"
+msgstr "登陆"
 
 msgid "The website dont allow register, you can ask owner for a account."
-msgstr "本站不开放注册，需要管理员先添加账号然后才能使用对应账号登录使用相应服务。"
+msgstr ""
+"本站不开放注册，需要管理员先添加账号然后才能使用对应账号登录使用相应服务。"
 
 msgid "Only display last 10 logs"
 msgstr "只显示最后10条日志"
@@ -347,8 +358,8 @@ msgstr "注意：必须首先激活您的Kindle，同时请到亚马逊账户中
 msgid "Page and add"
 msgstr "页面将"
 
-msgid "to 'Your Kindle's approved email list'."
-msgstr "加入 'Your Kindle's approved email list'。"
+msgid "to 'Approved Personal Document E-mail List'."
+msgstr "加入 'Approved Personal Document E-mail List'。"
 
 msgid "Title format"
 msgstr "标题样式"
@@ -401,7 +412,7 @@ msgstr "六天"
 msgid "7 Days"
 msgstr "一星期"
 
-msgid "Deliver Days"
+msgid "Deliver days"
 msgstr "投递日"
 
 msgid "Mon"
@@ -427,3 +438,36 @@ msgstr "日"
 
 msgid "Logs of other users"
 msgstr "其他用户的日志"
+
+msgid "Merge books into one"
+msgstr "多本书籍合并投递为一本"
+
+msgid "Append hyperlink '%s' to article"
+msgstr "在每篇文章后附加 '%s' 超链接"
+
+msgid "Share"
+msgstr "归档和分享"
+
+msgid "Append hyperlinks for share to article."
+msgstr "在文章最后附加归档或分享链接"
+
+msgid "Fuck Gfw (For users in China)"
+msgstr "我需要翻墙（针对中国用户）"
+
+msgid "Others"
+msgstr "其他"
+
+msgid "Login Info"
+msgstr "登陆信息"
+
+msgid "Input website login info for book '%s'"
+msgstr "请提供书籍 '%s' 的网站登陆信息"
+
+msgid "Leave any field empty to delete info from database."
+msgstr "留空任何一项则从数据库中删除网站登陆信息。"
+
+msgid "Account"
+msgstr "账号"
+
+msgid "Submit"
+msgstr "提交"

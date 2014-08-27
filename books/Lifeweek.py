@@ -14,8 +14,11 @@ class Lifeweek(BaseFeedBook):
     mastheadfile          = "mh_lifeweek.gif"
     coverfile             = "cv_lifeweek.jpg"
     oldest_article        = 0
-    deliver_days          = ['Saturday',]
+    deliver_days          = ['Saturday']
     
     feeds = [
             (u'三联生活网', 'http://app.lifeweek.com.cn/?app=rss&controller=index&action=feed'),
            ]
+
+    def processtitle(self, title):
+        return title[:-6] if title.endswith(u'_三联生活网') else title

@@ -1,38 +1,84 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-"""app的配置文件"""
+"""Configures for KindleEar, the First two variable is must to modify.
+KindleEar配置文件，请务必修改开始两个配置（如果使用uploader，则uploader自动帮你修改）
+"""
 
-SRC_EMAIL = "akindleear@gmail.com"  #邮件的发件人地址
+SRC_EMAIL = "akindleear@gmail.com"  #Your gmail account for sending mail to Kindle
+DOMAIN = "https://kindleear.appspot.com" #Your domain of app
 
-DEFAULT_MASTHEAD = "mh_default.gif" #如果书籍没有报头，则使用此报头。
-DEFAULT_COVER = "cv_default.jpg" #如果书籍没有封面，则使用此封面，留空则不添加封面
-TIMEZONE = 8 #默认时区
+TIMEZONE = 8  #Default timezone, you can modify it in webpage after deployed
 
-#自定义RSS的默认标题，后续可以在网页上修改，如果包含中文则需要在前面加u''
+DEFAULT_MASTHEAD = "mh_default.gif" #default masthead
+DEFAULT_COVER = "cv_default.jpg" #default cover, leave it empty will not add cover to book
+DEFAULT_COVER_BV = None #default cover for merged-book, None indicates paste all covers into one
+
 MY_FEEDS_TITLE = u'KindleEar'
 MY_FEEDS_DESC = u'RSS delivering from KindleEar'
 
-#设置下载RSS和文章的超时时间，单位为秒，如果RSS很多，设置短一点有可能提高一些效率
-#但是也增加了下载超时的可能，超时则丢失超时的RSS或文章或图片，不会有更多的影响
-#(GAE默认为5秒)
-CONNECTION_TIMEOUT = 25
+#default timeout for network connection
+CONNECTION_TIMEOUT = 45
 
-# True则发送邮件的文件名转换为拼音（如果是汉字的话）
+# True to translate filename in chinese to pinyin
 PINYIN_FILENAME = False
 
-#True则每篇文章都自动检测编码，这会减慢一些处理速度，但是一般不会导致乱码
-#False则先使用上一篇文章的编码进行解码，如果失败再检测此文章编码，
-#因为每个RSS源的第一篇文章都强制检测一次编码，一般来说不会导致乱码，
-#并且处理性能好很多，如果有部分文章出现乱码，则需要设置此选项为True
-#否则还是推荐设置为False
+#If set to True, encoding detected by chardet module will be used for each article
+#otherwise encoding in http response header or meta of html is used in proprity.
 ALWAYS_CHAR_DETECT = False
 
-#是否生成TOC的文章内容预览，如果使用非触摸版Kindle，没意义，因为看不到
-#对于kindle touch和kindle paperwhite可以设置为True。
-GENERATE_TOC_DESC = True
-TOC_DESC_WORD_LIMIT = 150  # 内容预览（摘要）字数限制
+#True indicates that any encoding in http header or in html header will be used.
+#False indicates that encoding will be used if the encoding in http header and the one in html header are the same.
+TRUST_ENCODING_IN_HEADER_OR_META = False
 
-#为减少文件大小，将大图片缩小为此尺寸，(Width,Height)
-#此尺寸是适应Kindle3的，如果你是完美主义者，可以设置为(568,682)，扣除margin
-#如果你使用的是其他分辨率的设置，可以直接修改为其他值
-REDUCE_IMAGE_TO = (600,800)
+#generate brief description for toc item or not.
+GENERATE_TOC_DESC = True
+TOC_DESC_WORD_LIMIT = 500
+
+#-------------------add by rexdf-----------
+#title for table of contents
+TABLE_OF_CONTENTS = u'Table Of Contents'
+
+#description of toc contains image or not
+GENERATE_TOC_THUMBNAIL = True
+
+#if generate other html toc or not, just for reading in pc
+GENERATE_HTML_TOC = True
+
+#if convert color image to gray or not, good for reducing size of book if you read it in Kindle only
+COLOR_TO_GRAY = True
+#----------------end of add by rexdf-------
+
+#reduce dimension of image to (Width,Height)
+#or you can set it to None, and choose device type in webpage 'setting'
+REDUCE_IMAGE_TO = None #(600,800)
+
+#clean css in dealing with content from string@appid.appspotmail.com or not
+DELETE_CSS_FOR_APPSPOTMAIL = True
+
+#if word count more than the number, the email received by appspotmail will 
+#be transfered to kindle directly, otherwise, will fetch the webpage for links in email.
+WORDCNT_THRESHOLD_FOR_APMAIL = 100
+
+#subject of email will be truncated based limit of word count
+SUBJECT_WORDCNT_FOR_APMAIL = 16
+
+#retry count when failed in sendmail to kindle
+SENDMAIL_RETRY_CNT = 1
+
+#GAE restrict postfix of attachment in email to send
+#True indicates KindleEar will replace the dot to underline to send mail if it failed.
+SENDMAIL_ALL_POSTFIX = False
+
+#text for link to share or archive
+#SHARE_FUCK_GFW_SRV: (For users in China)如果你要翻墙的话，请设置为其中一个转发服务器
+#翻墙转发服务器源码：http://github.com/cdhigh/forwarder
+#SHARE_FUCK_GFW_SRV = "http://forwarder.ap01.aws.af.cm/?k=xzSlE&t=60&u=%s"
+SHARE_FUCK_GFW_SRV = "http://kforwarder.herokuapp.com/?k=xzSlE&t=60&u=%s"
+SAVE_TO_EVERNOTE = u"Save to evernote"
+SAVE_TO_WIZ = u"Save to Wiz"
+SHARE_ON_XWEIBO = u"Share on Sina Weibo"
+SHARE_ON_TWEIBO = u"Share on Tencent Weibo"
+SHARE_ON_FACEBOOK = u"Share on facebook"
+SHARE_ON_TWITTER = u"Tweet it"
+SHARE_ON_TUMBLR = u"Share on tumblr"
+OPEN_IN_BROWSER = u"Open in Browser"
