@@ -11,10 +11,11 @@ import web
 from google.appengine.api import mail
 from apps.BaseHandler import BaseHandler
 from apps.dbModels import *
-from apps.utils import hide_email
+from apps.utils import hide_email, etagged
 
 from bs4 import BeautifulSoup
 from books.base import BaseUrlBook
+from config import SHARE_FUCK_GFW_SRV
 
 #import main
 
@@ -23,6 +24,7 @@ class Share(BaseHandler):
     __url__ = "/share"
     SHARE_IMAGE_EMBEDDED = True
     
+    @etagged()
     def GET(self):
         import urlparse,urllib
         action = web.input().get('act')
@@ -40,8 +42,8 @@ class Share(BaseHandler):
         url = urllib.unquote(url)
         
         #因为知乎好文章比较多，特殊处理一下知乎
-        if urlparse.urlsplit(url)[1].endswith('zhihu.com'):
-            url = 'http://forwarder.ap01.aws.af.cm/?k=xzSlE&t=60&u=%s'%urllib.quote(url.encode('utf-8'))
+        #if urlparse.urlsplit(url)[1].endswith('zhihu.com'):
+        #    url = SHARE_FUCK_GFW_SRV % urllib.quote(url.encode('utf-8'))
             
         if action in ('evernote','wiz'): #保存至evernote/wiz
             if action=='evernote' and (not user.evernote or not user.evernote_mail):
@@ -104,10 +106,10 @@ class Share(BaseHandler):
             to = user.wiz_mail if action=='wiz' else user.evernote_mail
             if html:
                 self.SendHtmlMail(username,to,title,html,attachments,user.timezone)
-                info = '"%s" saved to %s (%s).' % (title,action,hide_email(to))
+                info = u'"%s" saved to %s (%s).' % (title,action,hide_email(to))
                 main.log.info(info)
                 web.header('Content-type', "text/html; charset=utf-8")
-                info = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+                info = u"""<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
                     <title>%s</title></head><body><p style="text-align:center;font-size:1.5em;">%s</p></body></html>""" % (title, info)
                 return info.encode('utf-8')
             else:

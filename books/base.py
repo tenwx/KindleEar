@@ -191,7 +191,7 @@ class BaseFeedBook:
         path = os.path.normpath(url.path)
         if IsRunInLocal: #假定调试环境为windows
             path = path.replace('\\', '/')
-        return urlparse.urlunsplit((url.scheme,url.netloc,path,url.query,url.fragment))
+        return urlparse.urlunsplit((url.scheme, url.netloc, path, url.query, url.fragment))
 
     def FragToXhtml(self, content, title, htmlencoding='utf-8', addtitleinbody=False):
         #将HTML片段嵌入完整的XHTML框架中
@@ -338,8 +338,11 @@ class BaseFeedBook:
                 if title.startswith(r'image/'): #图片
                     yield (title, imgurl, imgfn, content, brief, thumbnail)
                 else:
-                    if not title: title = ftitle
-                    content =  self.postprocess(content)
+                    if user and user.use_title_in_feed:
+                        title = ftitle
+                    elif not title:
+                        title = ftitle
+                    content = self.postprocess(content)
                     yield (section, url, title, content, brief, thumbnail)
 
     def fetcharticle(self, url, opener, decoder):
@@ -360,7 +363,7 @@ class BaseFeedBook:
         content = self.fetch(self.login_url, opener, decoder)
         if not content:
             return
-        debug_mail(content)
+        #debug_mail(content)
         soup = BeautifulSoup(content, 'lxml')
         form = self.SelectLoginForm(soup)
         
@@ -368,8 +371,8 @@ class BaseFeedBook:
             self.log.warn('Cannot found login form!')
             return
         
-        self.log.info('Form selected:id(%s),class(%s)' % (form.get('id'),form.get('class')))
-
+        self.log.info('Form selected for login:name(%s),id(%s),class(%s)' % (form.get('name'),form.get('id'),form.get('class')))
+        
         method = form.get('method', 'get').upper()
         action = self.urljoin(self.login_url, form['action']) if form.get('action') else self.login_url
         
@@ -396,15 +399,17 @@ class BaseFeedBook:
         fields_dic[name_of_field(field_name)] = self.account
         fields_dic[name_of_field(field_pwd)] = self.password
         
-        parts = urlparse.urlparse(action)
-        rest, (query, frag) = parts[:-2], parts[-2:]
         if method == 'GET':
-            target_url = urlparse.urlunparse(rest + (urllib.urlencode(fields_dic),None))
-            self.log.debug('Login url : ' + target_url)
-            opener.open(target_url)
+            parts = urlparse.urlparse(action)
+            qs = urlparse.parse_qs(parts.query)
+            fields_dic.update(qs)
+            newParts = parts[:-2] + (urllib.urlencode(fields_dic), None)
+            target_url = urlparse.urlunparse(newParts)
+            #self.log.debug('Login url : ' + target_url)
+            return opener.open(target_url)
         else:
-            self.log.warn('field_dic:%s' % repr(fields_dic))
-            target_url = urlparse.urlunparse(rest[:-1] + (None,None,None))
+            #self.log.debug('field_dic:%s' % repr(fields_dic))
+            target_url = action
             return opener.open(target_url, data=fields_dic)
             
     def SelectLoginForm(self, soup):
@@ -474,15 +479,26 @@ class BaseFeedBook:
         因为图片文件占内存，为了节省内存，这个函数也做为生成器
         """
         content = self.preprocess(article)
-
+        if not content:
+            return
+            
         # 提取正文
         try:
             doc = readability.Document(content,positive_keywords=self.positive_classes)
             summary = doc.summary(html_partial=False)
         except:
-            self.log.warn('article is invalid.[%s]' % url)
+            # 如果提取正文出错，可能是图片（一个图片做为一篇文章，没有使用html包装）
+            imgtype = imghdr.what(None, content)
+            if imgtype: #如果是图片，则使用一个简单的html做为容器
+                imgmime = r"image/" + imgtype
+                fnimg = "img%d.%s" % (self.imgindex, 'jpg' if imgtype=='jpeg' else imgtype)
+                yield (imgmime, url, fnimg, content, None, None)
+                tmphtml = '<html><head><title>Picture</title></head><body><img src="%s" /></body></html>' % fnimg
+                yield ('Picture', None, None, tmphtml, '', None)
+            else:
+                self.log.warn('article is invalid.[%s]' % url)
             return
-
+        
         title = doc.short_title()
         if not title:
             self.log.warn('article has no title.[%s]' % url)
@@ -500,6 +516,10 @@ class BaseFeedBook:
             summary = simple_extract(content)
             soup = BeautifulSoup(summary, "lxml")
             body = soup.find('body')
+            if not body:
+                self.log.warn('extract article content failed.[%s]' % url)
+                return
+                
             head = soup.find('head')
             #增加备用算法提示，提取效果不好不要找我，类似免责声明：）
             info = soup.new_tag('p', style='color:#555555;font-size:60%;text-align:right;')
@@ -577,14 +597,15 @@ class BaseFeedBook:
                 if not imgurl:
                     img.decompose()
                     continue
-                if not imgurl.startswith('http'):
-                    imgurl = self.urljoin(url, imgurl)
-                if self.fetch_img_via_ssl and url.startswith('https://'):
-                    imgurl = imgurl.replace('http://', 'https://')
-                if self.isfiltered(imgurl):
-                    self.log.warn('img filtered : %s' % imgurl)
-                    img.decompose()
-                    continue
+                if not imgurl.startswith('data:'):
+                    if not imgurl.startswith('http'):
+                        imgurl = self.urljoin(url, imgurl)
+                    if self.fetch_img_via_ssl and url.startswith('https://'):
+                        imgurl = imgurl.replace('http://', 'https://')
+                    if self.isfiltered(imgurl):
+                        self.log.warn('img filtered : %s' % imgurl)
+                        img.decompose()
+                        continue
                 imgresult = opener.open(imgurl)
                 imgcontent = self.process_image(imgresult.content,opts) if imgresult.status_code==200 else None
                 if imgcontent:
@@ -731,14 +752,15 @@ class BaseFeedBook:
                 if not imgurl:
                     img.decompose()
                     continue
-                if not imgurl.startswith('http'):
-                    imgurl = self.urljoin(url, imgurl)
-                if self.fetch_img_via_ssl and url.startswith('https://'):
-                    imgurl = imgurl.replace('http://', 'https://')
-                if self.isfiltered(imgurl):
-                    self.log.warn('img filtered:%s' % imgurl)
-                    img.decompose()
-                    continue
+                if not imgurl.startswith('data:'):
+                    if not imgurl.startswith('http'):
+                        imgurl = self.urljoin(url, imgurl)
+                    if self.fetch_img_via_ssl and url.startswith('https://'):
+                        imgurl = imgurl.replace('http://', 'https://')
+                    if self.isfiltered(imgurl):
+                        self.log.warn('img filtered:%s' % imgurl)
+                        img.decompose()
+                        continue
                 imgresult = opener.open(imgurl)
                 imgcontent = self.process_image(imgresult.content,opts) if imgresult.status_code==200 else None
                 if imgcontent:
@@ -1048,14 +1070,15 @@ class WebpageBook(BaseFeedBook):
                     if not imgurl:
                         img.decompose()
                         continue
-                    if not imgurl.startswith('http'):
-                        imgurl = self.urljoin(url, imgurl)
-                    if self.fetch_img_via_ssl and url.startswith('https://'):
-                        imgurl = imgurl.replace('http://', 'https://')
-                    if self.isfiltered(imgurl):
-                        self.log.warn('img filtered:%s' % imgurl)
-                        img.decompose()
-                        continue
+                    if not imgurl.startswith('data:'):
+                        if not imgurl.startswith('http'):
+                            imgurl = self.urljoin(url, imgurl)
+                        if self.fetch_img_via_ssl and url.startswith('https://'):
+                            imgurl = imgurl.replace('http://', 'https://')
+                        if self.isfiltered(imgurl):
+                            self.log.warn('img filtered:%s' % imgurl)
+                            img.decompose()
+                            continue
                     imgresult = opener.open(imgurl)
                     imgcontent = self.process_image(imgresult.content,opts) if imgresult.status_code==200 else None
                     if imgcontent:

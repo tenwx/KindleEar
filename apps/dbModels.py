@@ -18,7 +18,8 @@ class Book(db.Model):
     description = db.StringProperty()
     users = db.StringListProperty()
     builtin = db.BooleanProperty()
-    needs_subscription = db.BooleanProperty()
+    needs_subscription = db.BooleanProperty() #是否需要登陆网页
+    separate = db.BooleanProperty() #是否单独推送
     
     #====自定义书籍
     language = db.StringProperty()
@@ -59,6 +60,7 @@ class KeUser(db.Model): # kindleEar User
     device = db.StringProperty()
     expires = db.DateTimeProperty()
     ownfeeds = db.ReferenceProperty(Book) # 每个用户都有自己的自定义RSS
+    use_title_in_feed = db.BooleanProperty() # 文章标题优先选择订阅源中的还是网页中的
     titlefmt = db.StringProperty() #在元数据标题中添加日期的格式
     merge_books = db.BooleanProperty() #是否合并书籍成一本
     

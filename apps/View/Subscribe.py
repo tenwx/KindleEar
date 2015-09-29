@@ -11,13 +11,14 @@ import datetime
 import web
 
 from google.appengine.api import memcache
-
+from apps.utils import etagged
 from apps.BaseHandler import BaseHandler
 from apps.dbModels import *
 
 class MySubscription(BaseHandler):
     __url__ = "/my"
     # 管理我的订阅和杂志列表
+    @etagged()
     def GET(self, tips=None):
         user = self.getcurrentuser()
         myfeeds = user.ownfeeds.feeds if user.ownfeeds else None
@@ -55,6 +56,7 @@ class Subscribe(BaseHandler):
         
         if main.session.username not in bk.users:
             bk.users.append(main.session.username)
+            bk.separate = bool(web.input().get('separate') in ('true','1'))
             bk.put()
         raise web.seeother('/my')
         
@@ -73,6 +75,7 @@ class Unsubscribe(BaseHandler):
         
         if main.session.username in bk.users:
             bk.users.remove(main.session.username)
+            bk.separate = False
             bk.put()
             
         #为安全起见，退订后也删除网站登陆信息（如果有的话）

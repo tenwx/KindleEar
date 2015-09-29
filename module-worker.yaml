@@ -19,6 +19,9 @@ libraries:
 - name: jinja2
   version: "latest"
 
+- name: pycrypto
+  version: "latest"
+
 inbound_services:
 - mail
 
@@ -30,6 +33,7 @@ handlers:
 
 - url: /static
   static_dir: static
+  application_readable: true
 
 - url: /_ah/mail/.+
   script: apps.handlemail.appmail
